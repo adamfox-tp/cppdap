@@ -1,0 +1,107 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Debug Adapter Protocol - Vendor Extensions",
+	"description": "Sample vendor extensions for the Debug Adapter Protocol demonstrating custom events, requests, responses, and types.",
+	"type": "object",
+
+	"definitions": {
+		"CustomVendorEvent": {
+			"allOf": [ { "$ref": "#/definitions/Event" }, {
+				"type": "object",
+				"description": "A custom event sent by the debug adapter to notify the client of vendor-specific state changes.",
+				"properties": {
+					"event": {
+						"type": "string",
+						"enum": [ "customVendorEvent" ]
+					},
+					"body": {
+						"type": "object",
+						"properties": {
+							"message": {
+								"type": "string",
+								"description": "A human-readable message describing the event."
+							},
+							"metadata": {
+								"$ref": "#/definitions/CustomVendorEventMetadata",
+								"description": "Additional metadata about the event."
+							}
+						},
+						"required": [ "message" ]
+					}
+				},
+				"required": [ "event", "body" ]
+			}]
+		},
+
+		"CustomVendorEventMetadata": {
+			"type": "object",
+			"description": "Metadata associated with custom vendor events.",
+			"properties": {
+				"timestamp": {
+					"type": "integer",
+					"description": "Unix timestamp when the event occurred."
+				},
+				"source": {
+					"type": "string",
+					"description": "The source component that generated the event."
+				},
+				"tags": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Optional tags for categorizing the event."
+				}
+			},
+			"required": [ "timestamp", "source" ]
+		},
+
+		"CustomVendorRequest": {
+			"allOf": [ { "$ref": "#/definitions/Request" }, {
+				"type": "object",
+				"description": "A custom request to inspect vendor-specific runtime state.",
+				"properties": {
+					"command": {
+						"type": "string",
+						"enum": [ "customVendorRequest" ]
+					},
+					"arguments": {
+						"$ref": "#/definitions/CustomVendorRequestArguments"
+					}
+				},
+				"required": [ "command" ]
+			}]
+		},
+
+		"CustomVendorRequestArguments": {
+			"type": "object",
+			"description": "Arguments for the customVendorRequest request.",
+			"properties": {
+				"target": {
+					"type": "string",
+					"description": "The target component or object to inspect."
+				}
+			},
+			"required": [ "target" ]
+		},
+
+		"CustomVendorResponse": {
+			"allOf": [ { "$ref": "#/definitions/Response" }, {
+				"type": "object",
+				"description": "Response to a customVendorRequest request.",
+				"properties": {
+					"body": {
+						"type": "object",
+						"properties": {
+                            "context": {
+                                "type": "string",
+                                "description": "Additional context information."
+                            }
+                        },
+						"required": [ "context" ]
+					}
+				}
+			}]
+		}
+	}
+}
